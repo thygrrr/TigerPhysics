@@ -6,9 +6,9 @@ public class InertiaTests
     private static void Check(Shape shape, JMatrix inertia, JVector com, float mass)
     {
         JMatrix dInertia = shape.Inertia - inertia;
-        Assert.That(MathHelper.IsZero(dInertia.UnsafeGet(0), 1e-3f));
-        Assert.That(MathHelper.IsZero(dInertia.UnsafeGet(1), 1e-3f));
-        Assert.That(MathHelper.IsZero(dInertia.UnsafeGet(2), 1e-3f));
+        Assert.That(MathHelper.IsZero(dInertia.X, 1e-3f));
+        Assert.That(MathHelper.IsZero(dInertia.Y, 1e-3f));
+        Assert.That(MathHelper.IsZero(dInertia.Z, 1e-3f));
 
         float dmass = shape.Mass - mass;
         Assert.That(MathF.Abs(dmass), Is.LessThan(1e-3f));

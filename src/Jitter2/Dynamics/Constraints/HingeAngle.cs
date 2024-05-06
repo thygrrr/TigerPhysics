@@ -142,15 +142,15 @@ public unsafe class HingeAngle : Constraint
             m0 *= -1.0f;
         }
 
-        data.Jacobian.UnsafeGet(0) = JVector.TransposedTransform(p0, m0);
-        data.Jacobian.UnsafeGet(1) = JVector.TransposedTransform(p1, m0);
-        data.Jacobian.UnsafeGet(2) = JVector.TransposedTransform(data.Axis, m0);
+        data.Jacobian.X = JVector.TransposedTransform(p0, m0);
+        data.Jacobian.Y = JVector.TransposedTransform(p1, m0);
+        data.Jacobian.Z = JVector.TransposedTransform(data.Axis, m0);
 
         data.EffectiveMass = JMatrix.TransposedMultiply(data.Jacobian, JMatrix.Multiply(body1.InverseInertiaWorld + body2.InverseInertiaWorld, data.Jacobian));
 
-        data.EffectiveMass.M11 += data.Softness * idt;
-        data.EffectiveMass.M22 += data.Softness * idt;
-        data.EffectiveMass.M33 += data.LimitSoftness * idt;
+        data.EffectiveMass.value.M11 += data.Softness * idt;
+        data.EffectiveMass.value.M22 += data.Softness * idt;
+        data.EffectiveMass.value.M33 += data.LimitSoftness * idt;
 
         float maxa = data.MaxAngle;
         float mina = data.MinAngle;
@@ -168,13 +168,13 @@ public unsafe class HingeAngle : Constraint
         else
         {
             data.AccumulatedImpulse.Z = 0;
-            data.EffectiveMass.M33 = 1;
-            data.EffectiveMass.M31 = data.EffectiveMass.M13 = 0;
-            data.EffectiveMass.M32 = data.EffectiveMass.M23 = 0;
+            data.EffectiveMass.value.M33 = 1;
+            data.EffectiveMass.value.M31 = data.EffectiveMass.value.M13 = 0;
+            data.EffectiveMass.value.M32 = data.EffectiveMass.value.M23 = 0;
 
             // TODO: do he have to set them to zero here, explicitly?
             //       does this also has to be done in PointOnLine?
-            data.Jacobian.M13 = data.Jacobian.M23 = data.Jacobian.M33 = 0;
+            data.Jacobian.value.M13 = data.Jacobian.value.M23 = data.Jacobian.value.M33 = 0;
         }
 
         JMatrix.Inverse(data.EffectiveMass, out data.EffectiveMass);

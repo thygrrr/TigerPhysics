@@ -9,18 +9,18 @@ public class Conversion
 {
     public static JMatrix ToJitterMatrix(Matrix4 im)
     {
-        JMatrix mat;
-        mat.M11 = im.M11;
-        mat.M12 = im.M12;
-        mat.M13 = im.M13;
-
-        mat.M21 = im.M21;
-        mat.M22 = im.M22;
-        mat.M23 = im.M23;
-
-        mat.M31 = im.M31;
-        mat.M32 = im.M32;
-        mat.M33 = im.M33;
+        var mat = new JMatrix
+        {
+            M11 = im.M11,
+            M12 = im.M12,
+            M13 = im.M13,
+            M21 = im.M21,
+            M22 = im.M22,
+            M23 = im.M23,
+            M31 = im.M31,
+            M32 = im.M32,
+            M33 = im.M33,
+        };
 
         return mat;
     }
@@ -63,9 +63,9 @@ public class Conversion
 
     public static unsafe void FromJitterOpt(RigidBody body, ref Matrix4 mat)
     {
-        Unsafe.CopyBlock(Unsafe.AsPointer(ref mat.M11), Unsafe.AsPointer(ref body.Data.Orientation.M11), 12);
-        Unsafe.CopyBlock(Unsafe.AsPointer(ref mat.M12), Unsafe.AsPointer(ref body.Data.Orientation.M12), 12);
-        Unsafe.CopyBlock(Unsafe.AsPointer(ref mat.M13), Unsafe.AsPointer(ref body.Data.Orientation.M13), 12);
+        Unsafe.CopyBlock(Unsafe.AsPointer(ref mat.M11), Unsafe.AsPointer(ref body.Data.Orientation.value.M11), 12);
+        Unsafe.CopyBlock(Unsafe.AsPointer(ref mat.M12), Unsafe.AsPointer(ref body.Data.Orientation.value.M11), 12);
+        Unsafe.CopyBlock(Unsafe.AsPointer(ref mat.M13), Unsafe.AsPointer(ref body.Data.Orientation.value.M11), 12);
         Unsafe.CopyBlock(Unsafe.AsPointer(ref mat.M14), Unsafe.AsPointer(ref body.Data.Position.X), 12);
     }
 

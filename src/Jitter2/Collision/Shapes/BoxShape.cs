@@ -103,9 +103,9 @@ public class BoxShape : Shape
         mass = size.X * size.Y * size.Z;
 
         inertia = JMatrix.Identity;
-        inertia.M11 = 1.0f / 12.0f * mass * (size.Y * size.Y + size.Z * size.Z);
-        inertia.M22 = 1.0f / 12.0f * mass * (size.X * size.X + size.Z * size.Z);
-        inertia.M33 = 1.0f / 12.0f * mass * (size.X * size.X + size.Y * size.Y);
+        inertia.value.M11 = 1.0f / 12.0f * mass * (size.Y * size.Y + size.Z * size.Z);
+        inertia.value.M22 = 1.0f / 12.0f * mass * (size.X * size.X + size.Z * size.Z);
+        inertia.value.M33 = 1.0f / 12.0f * mass * (size.X * size.X + size.Y * size.Y);
 
         com = JVector.Zero;
     }

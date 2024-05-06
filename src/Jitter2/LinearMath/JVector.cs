@@ -22,6 +22,7 @@
  */
 
 using System;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -202,13 +203,20 @@ public struct JVector
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Transform(in JVector vector, in JMatrix matrix, out JVector result)
     {
+        result = Vector3.Transform(vector, matrix);
+        /*
         float num0 = vector.X * matrix.M11 + vector.Y * matrix.M12 + vector.Z * matrix.M13;
         float num1 = vector.X * matrix.M21 + vector.Y * matrix.M22 + vector.Z * matrix.M23;
         float num2 = vector.X * matrix.M31 + vector.Y * matrix.M32 + vector.Z * matrix.M33;
-
+        */
+        /*
+        float num0 = vector.X * matrix.M11 + vector.Y * matrix.M21 + vector.Z * matrix.M31;
+        float num1 = vector.X * matrix.M12 + vector.Y * matrix.M22 + vector.Z * matrix.M32;
+        float num2 = vector.X * matrix.M13 + vector.Y * matrix.M23 + vector.Z * matrix.M33;
         result.X = num0;
         result.Y = num1;
         result.Z = num2;
+        */
     }
 
     /// <summary>
@@ -217,13 +225,21 @@ public struct JVector
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void TransposedTransform(in JVector vector, in JMatrix matrix, out JVector result)
     {
+        var transposed = Matrix4x4.Transpose(matrix);
+        result = Vector3.Transform(vector, transposed);
+        /*
         float num0 = vector.X * matrix.M11 + vector.Y * matrix.M21 + vector.Z * matrix.M31;
         float num1 = vector.X * matrix.M12 + vector.Y * matrix.M22 + vector.Z * matrix.M32;
         float num2 = vector.X * matrix.M13 + vector.Y * matrix.M23 + vector.Z * matrix.M33;
-
+        */
+        /*
+        float num0 = vector.X * matrix.M11 + vector.Y * matrix.M12 + vector.Z * matrix.M13;
+        float num1 = vector.X * matrix.M21 + vector.Y * matrix.M22 + vector.Z * matrix.M23;
+        float num2 = vector.X * matrix.M31 + vector.Y * matrix.M32 + vector.Z * matrix.M33;
         result.X = num0;
         result.Y = num1;
         result.Z = num2;
+        */
     }
 
     /// <summary>
@@ -231,16 +247,18 @@ public struct JVector
     /// </summary>
     public static JMatrix Outer(in JVector u, in JVector v)
     {
-        JMatrix result;
-        result.M11 = u.X * v.X;
-        result.M12 = u.X * v.Y;
-        result.M13 = u.X * v.Z;
-        result.M21 = u.Y * v.X;
-        result.M22 = u.Y * v.Y;
-        result.M23 = u.Y * v.Z;
-        result.M31 = u.Z * v.X;
-        result.M32 = u.Z * v.Y;
-        result.M33 = u.Z * v.Z;
+        var result = new JMatrix
+        {
+            M11 = u.X * v.X,
+            M12 = u.X * v.Y,
+            M13 = u.X * v.Z,
+            M21 = u.Y * v.X,
+            M22 = u.Y * v.Y,
+            M23 = u.Y * v.Z,
+            M31 = u.Z * v.X,
+            M32 = u.Z * v.Y,
+            M33 = u.Z * v.Z,
+        };
         return result;
     }
 
@@ -454,6 +472,18 @@ public struct JVector
         Y = vector.Y;
         Z = vector.Z;
     }
+
+    private JVector(Vector4 vector)
+    {
+        X = vector.X;
+        Y = vector.Y;
+        Z = vector.Z;
+    }
+
+    public static implicit operator System.Numerics.Vector4(JVector self)
+    {
+        return new System.Numerics.Vector4(self.X, self.Y, self.Z, 0);
+    }
     
     public static implicit operator System.Numerics.Vector3(JVector self)
     {
@@ -461,6 +491,11 @@ public struct JVector
     }
     
     public static implicit operator JVector(System.Numerics.Vector3 self)
+    {
+        return new JVector(self);
+    }
+    
+    public static implicit operator JVector(System.Numerics.Vector4 self)
     {
         return new JVector(self);
     }

@@ -23,6 +23,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace Jitter2.LinearMath;
@@ -70,7 +71,7 @@ public static class MathHelper
 
     public static bool IsRotationMatrix(in JMatrix matrix, float epsilon = 1e-06f)
     {
-        if (!UnsafeIsZero(JMatrix.MultiplyTransposed(matrix, matrix) - JMatrix.Identity, epsilon))
+        if (!UnsafeIsZero((Matrix4x4) JMatrix.MultiplyTransposed(matrix, matrix) - Matrix4x4.Identity, epsilon))
         {
             return false;
         }
@@ -82,81 +83,29 @@ public static class MathHelper
     {
         orientation = matrix;
 
-        scale.X = orientation.UnsafeGet(0).Length();
-        scale.Y = orientation.UnsafeGet(1).Length();
-        scale.Z = orientation.UnsafeGet(2).Length();
+        scale.X = orientation.X.Length();
+        scale.Y = orientation.Y.Length();
+        scale.Z = orientation.Z.Length();
 
-        orientation.UnsafeGet(0) *= 1.0f / scale.X;
-        orientation.UnsafeGet(1) *= 1.0f / scale.Y;
-        orientation.UnsafeGet(2) *= 1.0f / scale.Z;
+        orientation.X *= 1.0f / scale.X;
+        orientation.Y *= 1.0f / scale.Y;
+        orientation.Z *= 1.0f / scale.Z;
     }
 
     public static bool IsZero(in JVector vector, float epsilon = 1e-6f)
     {
-        float x = MathF.Abs(vector.X);
-        float y = MathF.Abs(vector.Y);
-        float z = MathF.Abs(vector.Z);
-
-        return MathF.Max(x, MathF.Max(y, z)) < epsilon;
+        return Vector3.Dot(vector, vector) < epsilon;
     }
 
     public static bool UnsafeIsZero(in JMatrix matrix, float epsilon = 1e-6f)
     {
-        if (!IsZero(matrix.UnsafeGet(0))) return false;
-        if (!IsZero(matrix.UnsafeGet(1))) return false;
-        if (!IsZero(matrix.UnsafeGet(2))) return false;
+        if (!IsZero(matrix.X, epsilon)) return false;
+        if (!IsZero(matrix.Y, epsilon)) return false;
+        if (!IsZero(matrix.Z, epsilon)) return false;
         return true;
     }
 
-    public static JMatrix InverseSquareRoot(JMatrix m, int sweeps = 2)
-    {
-        float phi, cp, sp;
-        Unsafe.SkipInit(out JMatrix r);
 
-        JMatrix rotation = JMatrix.Identity;
-
-        for (int i = 0; i < sweeps; i++)
-        {
-            // M32
-            if (MathF.Abs(m.M23) > 1e-6f)
-            {
-                phi = MathF.Atan2(1, (m.M33 - m.M22) / (2.0f * m.M23)) / 2.0f;
-                (sp, cp) = MathF.SinCos(phi);
-                r = new JMatrix(1, 0, 0, 0, cp, sp, 0, -sp, cp);
-                JMatrix.Multiply(m, r, out m);
-                JMatrix.TransposedMultiply(r, m, out m);
-                JMatrix.Multiply(rotation, r, out rotation);
-            }
-
-            // M21
-            if (MathF.Abs(m.M21) > 1e-6f)
-            {
-                phi = MathF.Atan2(1, (m.M22 - m.M11) / (2.0f * m.M21)) / 2.0f;
-                (sp, cp) = MathF.SinCos(phi);
-                r = new JMatrix(cp, sp, 0, -sp, cp, 0, 0, 0, 1);
-                JMatrix.Multiply(m, r, out m);
-                JMatrix.TransposedMultiply(r, m, out m);
-                JMatrix.Multiply(rotation, r, out rotation);
-            }
-
-            // M31
-            if (MathF.Abs(m.M31) > 1e-6f)
-            {
-                phi = MathF.Atan2(1, (m.M33 - m.M11) / (2.0f * m.M31)) / 2.0f;
-                (sp, cp) = MathF.SinCos(phi);
-                r = new JMatrix(cp, 0, sp, 0, 1, 0, -sp, 0, cp);
-                JMatrix.Multiply(m, r, out m);
-                JMatrix.TransposedMultiply(r, m, out m);
-                JMatrix.Multiply(rotation, r, out rotation);
-            }
-        }
-
-        JMatrix d = new JMatrix(1.0f / MathF.Sqrt(m.M11), 0, 0,
-            0, 1.0f / MathF.Sqrt(m.M22), 0,
-            0, 0, 1.0f / MathF.Sqrt(m.M33));
-
-        return rotation * d * JMatrix.Transpose(rotation);
-    }
 
     /// <summary>
     /// Calculates an orthonormal vector to the given vector.
@@ -194,21 +143,6 @@ public static class MathHelper
         return result;
     }
 
-
-    /// <summary>
-    /// Verifies whether the columns of the given matrix constitute an orthonormal basis.
-    /// An orthonormal basis means that the columns are mutually perpendicular and have unit length.
-    /// </summary>
-    /// <param name="matrix">The input matrix to check for an orthonormal basis.</param>
-    /// <returns>True if the columns of the matrix form an orthonormal basis; otherwise, false.</returns>
-    public static bool CheckOrthonormalBasis(in JMatrix matrix)
-    {
-        JMatrix delta = JMatrix.MultiplyTransposed(matrix, matrix) - JMatrix.Identity;
-        if (JVector.MaxAbs(delta.UnsafeGet(0)) > 1e-6f) return false;
-        if (JVector.MaxAbs(delta.UnsafeGet(1)) > 1e-6f) return false;
-        if (JVector.MaxAbs(delta.UnsafeGet(2)) > 1e-6f) return false;
-        return true;
-    }
 
     /// <summary>
     /// Determines whether the length of the given vector is zero or close to zero.
