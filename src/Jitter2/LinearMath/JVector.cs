@@ -184,8 +184,7 @@ public struct JVector
     /// </summary>
     public static JVector Transform(in JVector vector, in JMatrix matrix)
     {
-        Transform(vector, matrix, out JVector result);
-        return result;
+        return Vector3.Transform(vector, matrix);
     }
 
     /// <summary>
@@ -193,8 +192,7 @@ public struct JVector
     /// </summary>
     public static JVector TransposedTransform(in JVector vector, in JMatrix matrix)
     {
-        TransposedTransform(vector, matrix, out JVector result);
-        return result;
+        return Vector3.Transform(vector, Matrix4x4.Transpose(matrix));
     }
 
     /// <summary>
@@ -259,27 +257,20 @@ public struct JVector
             M32 = u.Z * v.Y,
             M33 = u.Z * v.Z,
         };
-        return result;
+        return result; //TODO: Maybe needs transposing?
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float Dot(in JVector vector1, in JVector vector2)
     {
-        return vector1.X * vector2.X + vector1.Y * vector2.Y + vector1.Z * vector2.Z;
+        return Vector3.Dot(vector1, vector2);
     }
-
-    public static JVector Add(in JVector value1, in JVector value2)
-    {
-        Add(value1, value2, out JVector result);
-        return result;
-    }
+    
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Add(in JVector value1, in JVector value2, out JVector result)
     {
-        result.X = value1.X + value2.X;
-        result.Y = value1.Y + value2.Y;
-        result.Z = value1.Z + value2.Z;
+        result = value1 + value2;
     }
 
     public static JVector Subtract(JVector value1, JVector value2)
@@ -291,35 +282,22 @@ public struct JVector
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Subtract(in JVector value1, in JVector value2, out JVector result)
     {
-        float num0 = value1.X - value2.X;
-        float num1 = value1.Y - value2.Y;
-        float num2 = value1.Z - value2.Z;
-
-        result.X = num0;
-        result.Y = num1;
-        result.Z = num2;
+        result = (Vector3) value1 - (Vector3) value2;
     }
 
     public static JVector Cross(in JVector vector1, in JVector vector2)
     {
-        Cross(vector1, vector2, out JVector result);
-        return result;
+        return Vector3.Cross(vector1, vector2);;
     }
 
     public static void Cross(in JVector vector1, in JVector vector2, out JVector result)
     {
-        float num0 = vector1.Y * vector2.Z - vector1.Z * vector2.Y;
-        float num1 = vector1.Z * vector2.X - vector1.X * vector2.Z;
-        float num2 = vector1.X * vector2.Y - vector1.Y * vector2.X;
-
-        result.X = num0;
-        result.Y = num1;
-        result.Z = num2;
+        result = Vector3.Cross(vector1, vector2);
     }
 
     public readonly override int GetHashCode()
     {
-        return X.GetHashCode() ^ Y.GetHashCode() ^ Z.GetHashCode();
+        return ((Vector3) this).GetHashCode();
     }
 
     public void Negate()
@@ -337,13 +315,7 @@ public struct JVector
 
     public static void Negate(in JVector value, out JVector result)
     {
-        float num0 = -value.X;
-        float num1 = -value.Y;
-        float num2 = -value.Z;
-
-        result.X = num0;
-        result.Y = num1;
-        result.Z = num2;
+        result = (Vector3) value * -1;
     }
 
     public static JVector Normalize(in JVector value)
@@ -363,21 +335,17 @@ public struct JVector
 
     public static void Normalize(in JVector value, out JVector result)
     {
-        float num2 = value.X * value.X + value.Y * value.Y + value.Z * value.Z;
-        float num = 1f / (float)Math.Sqrt(num2);
-        result.X = value.X * num;
-        result.Y = value.Y * num;
-        result.Z = value.Z * num;
+        result = Vector3.Normalize(value);
     }
 
     public readonly float LengthSquared()
     {
-        return X * X + Y * Y + Z * Z;
+        return ((Vector3) this).LengthSquared();
     }
 
     public readonly float Length()
     {
-        return MathF.Sqrt(X * X + Y * Y + Z * Z);
+        return ((Vector3) this).Length();
     }
 
     public static void Swap(ref JVector vector1, ref JVector vector2)
@@ -387,22 +355,12 @@ public struct JVector
 
     public static JVector Multiply(in JVector value1, float scaleFactor)
     {
-        Multiply(value1, scaleFactor, out JVector result);
-        return result;
-    }
-
-    public void Multiply(float factor)
-    {
-        X *= factor;
-        Y *= factor;
-        Z *= factor;
+        return (Vector3) value1 * scaleFactor;
     }
 
     public static void Multiply(in JVector value1, float scaleFactor, out JVector result)
     {
-        result.X = value1.X * scaleFactor;
-        result.Y = value1.Y * scaleFactor;
-        result.Z = value1.Z * scaleFactor;
+        result = Multiply(value1, scaleFactor);
     }
 
     /// <summary>
@@ -410,58 +368,37 @@ public struct JVector
     /// </summary>
     public static JVector operator %(in JVector vector1, in JVector vector2)
     {
-        JVector result;
-        result.X = vector1.Y * vector2.Z - vector1.Z * vector2.Y;
-        result.Y = vector1.Z * vector2.X - vector1.X * vector2.Z;
-        result.Z = vector1.X * vector2.Y - vector1.Y * vector2.X;
-        return result;
+        return Vector3.Cross(vector1, vector2);
     }
 
     public static float operator *(in JVector vector1, in JVector vector2)
     {
-        return vector1.X * vector2.X + vector1.Y * vector2.Y + vector1.Z * vector2.Z;
+        return Vector3.Dot(vector1, vector2);
     }
 
     public static JVector operator *(in JVector value1, float value2)
     {
-        JVector result;
-        result.X = value1.X * value2;
-        result.Y = value1.Y * value2;
-        result.Z = value1.Z * value2;
-        return result;
+        return Vector3.Multiply(value1, value2);
     }
 
     public static JVector operator *(float value1, in JVector value2)
     {
-        JVector result;
-        result.X = value2.X * value1;
-        result.Y = value2.Y * value1;
-        result.Z = value2.Z * value1;
-        return result;
+        return Vector3.Multiply(value1, value2);
     }
 
     public static JVector operator -(in JVector value1, in JVector value2)
     {
-        JVector result;
-        result.X = value1.X - value2.X;
-        result.Y = value1.Y - value2.Y;
-        result.Z = value1.Z - value2.Z;
-        return result;
+        return Vector3.Subtract(value1, value2);
     }
 
     public static JVector operator -(JVector left)
     {
-        return Multiply(left, -1.0f);
+        return Negate(left);
     }
 
     public static JVector operator +(in JVector value1, in JVector value2)
     {
-        JVector result;
-        result.X = value1.X + value2.X;
-        result.Y = value1.Y + value2.Y;
-        result.Z = value1.Z + value2.Z;
-
-        return result;
+        return Vector3.Add(value1, value2);
     }
 
     #region Interop with System.Numerics
