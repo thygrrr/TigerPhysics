@@ -83,30 +83,6 @@ public struct JVector
         Z = xyz;
     }
 
-    public unsafe ref float UnsafeGet(int index)
-    {
-        float* ptr = (float*)Unsafe.AsPointer(ref this);
-        return ref ptr[index];
-    }
-
-    public unsafe float this[int i]
-    {
-        get
-        {
-            fixed (float* ptr = &X)
-            {
-                return ptr[i];
-            }
-        }
-        set
-        {
-            fixed (float* ptr = &X)
-            {
-                ptr[i] = value;
-            }
-        }
-    }
-
     public readonly override string ToString()
     {
         return $"{X:F6} {Y:F6} {Z:F6}";
@@ -115,24 +91,18 @@ public struct JVector
     public readonly override bool Equals(object? obj)
     {
         if (obj is not JVector) return false;
-        JVector other = (JVector)obj;
-
-        return X == other.X && Y == other.Y && Z == other.Z;
+        var other = (Vector3)obj;
+        return other.Equals(this);
     }
 
     public static bool operator ==(JVector value1, JVector value2)
     {
-        return value1.X == value2.X && value1.Y == value2.Y && value1.Z == value2.Z;
+        return ((Vector3) value1).Equals(value2);
     }
 
     public static bool operator !=(JVector value1, JVector value2)
     {
-        if (value1.X == value2.X && value1.Y == value2.Y)
-        {
-            return value1.Z != value2.Z;
-        }
-
-        return true;
+        return !((Vector3) value1).Equals(value2);
     }
 
     public static JVector Min(in JVector value1, in JVector value2)
@@ -202,19 +172,6 @@ public struct JVector
     public static void Transform(in JVector vector, in JMatrix matrix, out JVector result)
     {
         result = Vector3.Transform(vector, matrix);
-        /*
-        float num0 = vector.X * matrix.M11 + vector.Y * matrix.M12 + vector.Z * matrix.M13;
-        float num1 = vector.X * matrix.M21 + vector.Y * matrix.M22 + vector.Z * matrix.M23;
-        float num2 = vector.X * matrix.M31 + vector.Y * matrix.M32 + vector.Z * matrix.M33;
-        */
-        /*
-        float num0 = vector.X * matrix.M11 + vector.Y * matrix.M21 + vector.Z * matrix.M31;
-        float num1 = vector.X * matrix.M12 + vector.Y * matrix.M22 + vector.Z * matrix.M32;
-        float num2 = vector.X * matrix.M13 + vector.Y * matrix.M23 + vector.Z * matrix.M33;
-        result.X = num0;
-        result.Y = num1;
-        result.Z = num2;
-        */
     }
 
     /// <summary>
@@ -225,19 +182,6 @@ public struct JVector
     {
         var transposed = Matrix4x4.Transpose(matrix);
         result = Vector3.Transform(vector, transposed);
-        /*
-        float num0 = vector.X * matrix.M11 + vector.Y * matrix.M21 + vector.Z * matrix.M31;
-        float num1 = vector.X * matrix.M12 + vector.Y * matrix.M22 + vector.Z * matrix.M32;
-        float num2 = vector.X * matrix.M13 + vector.Y * matrix.M23 + vector.Z * matrix.M33;
-        */
-        /*
-        float num0 = vector.X * matrix.M11 + vector.Y * matrix.M12 + vector.Z * matrix.M13;
-        float num1 = vector.X * matrix.M21 + vector.Y * matrix.M22 + vector.Z * matrix.M23;
-        float num2 = vector.X * matrix.M31 + vector.Y * matrix.M32 + vector.Z * matrix.M33;
-        result.X = num0;
-        result.Y = num1;
-        result.Z = num2;
-        */
     }
 
     /// <summary>
