@@ -32,7 +32,7 @@ namespace Jitter2.LinearMath;
 /// Represents a three-dimensional vector using three floating-point numbers.
 /// </summary>
 [StructLayout(LayoutKind.Sequential, Size = 12)]
-public struct JVector
+public struct JVector : IEquatable<JVector>, IEquatable<Vector3>
 {
     internal static JVector InternalZero;
     internal static JVector Arbitrary;
@@ -88,11 +88,20 @@ public struct JVector
         return $"{X:F6} {Y:F6} {Z:F6}";
     }
 
+    public readonly bool Equals(JVector other)
+    {
+        return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z);
+    }
+
+    public readonly bool Equals(Vector3 other)
+    {
+        return X.Equals(other.X) && Y.Equals(other.Y) && Z.Equals(other.Z);
+    }
+
     public readonly override bool Equals(object? obj)
     {
-        if (obj is not JVector) return false;
-        var other = (Vector3)obj;
-        return other.Equals(this);
+        return obj is JVector other && Equals(other)
+               || obj is Vector3 v3 && Equals(v3);
     }
 
     public static bool operator ==(JVector value1, JVector value2)
@@ -241,7 +250,7 @@ public struct JVector
 
     public readonly override int GetHashCode()
     {
-        return ((Vector3) this).GetHashCode();
+        return HashCode.Combine(X, Y, Z);
     }
 
     public void Negate()

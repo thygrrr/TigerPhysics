@@ -99,10 +99,9 @@ public static class MathHelper
 
     public static bool UnsafeIsZero(in JMatrix matrix, float epsilon = 1e-6f)
     {
-        if (!IsZero(matrix.X, epsilon)) return false;
-        if (!IsZero(matrix.Y, epsilon)) return false;
-        if (!IsZero(matrix.Z, epsilon)) return false;
-        return true;
+        return IsZero(matrix.X, epsilon)
+            && IsZero(matrix.Y, epsilon)
+            && IsZero(matrix.Z, epsilon);
     }
 
 
@@ -110,35 +109,35 @@ public static class MathHelper
     /// <summary>
     /// Calculates an orthonormal vector to the given vector.
     /// </summary>
-    /// <param name="vec">The input vector, which does not need to be normalized.</param>
+    /// <param name="v">The input vector, which does not need to be normalized.</param>
     /// <returns>An orthonormal vector to the input vector.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static JVector CreateOrthonormal(in JVector vec)
+    public static JVector CreateOrthonormal(in JVector v)
     {
-        JVector result = vec;
+        JVector result = v;
 
-        Debug.Assert(!CloseToZero(vec));
+        Debug.Assert(!CloseToZero(v));
 
-        float xa = Math.Abs(vec.X);
-        float ya = Math.Abs(vec.Y);
-        float za = Math.Abs(vec.Z);
+        float xa = Math.Abs(v.X);
+        float ya = Math.Abs(v.Y);
+        float za = Math.Abs(v.Z);
 
         if ((xa > ya && xa > za) || (ya > xa && ya > za))
         {
-            result.X = vec.Y;
-            result.Y = -vec.X;
+            result.X = -v.Y;
+            result.Y = v.X;
             result.Z = 0;
         }
         else
         {
-            result.Y = vec.Z;
-            result.Z = -vec.Y;
-            result.X = 0;
+            result.X = -v.Z;
+            result.Y = 0;
+            result.Z = v.X;
         }
 
         result.Normalize();
 
-        Debug.Assert(MathF.Abs(JVector.Dot(result, vec)) < 1e-6f);
+        Debug.Assert(MathF.Abs(JVector.Dot(result, v)) < 1e-6f);
 
         return result;
     }
