@@ -445,4 +445,25 @@ public struct JVector
 
         return result;
     }
+
+    #region Interop with System.Numerics
+    
+    public JVector(System.Numerics.Vector3 vector)
+    {
+        X = vector.X;
+        Y = vector.Y;
+        Z = vector.Z;
+    }
+    
+    public static implicit operator System.Numerics.Vector3(JVector self)
+    {
+        return new System.Numerics.Vector3(self.X, self.Y, self.Z);
+    }
+    
+    public static implicit operator JVector(System.Numerics.Vector3 self)
+    {
+        return new JVector(self);
+    }
+    
+    #endregion
 }

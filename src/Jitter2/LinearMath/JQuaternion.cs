@@ -53,6 +53,7 @@ public struct JQuaternion
         Z = v.Z;
     }
 
+
     public static JQuaternion Add(JQuaternion quaternion1, JQuaternion quaternion2)
     {
         Add(in quaternion1, in quaternion2, out JQuaternion result);
@@ -232,4 +233,26 @@ public struct JQuaternion
         Subtract(value1, value2, out JQuaternion result);
         return result;
     }
+
+    #region Interop with System.Numerics
+    
+    public JQuaternion(System.Numerics.Quaternion quaternion)
+    {
+        W = quaternion.W;
+        X = quaternion.X;
+        Y = quaternion.Y;
+        Z = quaternion.Z;
+    }
+    
+    public static implicit operator System.Numerics.Quaternion(JQuaternion self)
+    {
+        return new System.Numerics.Quaternion(self.X, self.Y, self.Z, self.W);
+    }
+    
+    public static implicit operator JQuaternion(System.Numerics.Quaternion quaternion)
+    {
+        return new JQuaternion(quaternion.X, quaternion.Y, quaternion.Z, quaternion.W);
+    }
+    
+    #endregion
 }

@@ -484,4 +484,36 @@ public struct JMatrix
         Subtract(value1, value2, out JMatrix result);
         return result;
     }
+
+    #region Interop with System.Numerics
+    
+    public static implicit operator System.Numerics.Matrix4x4(JMatrix matrix)
+    {
+        return new System.Numerics.Matrix4x4(
+            matrix.M11, matrix.M12, matrix.M13, 0,
+            matrix.M21, matrix.M22, matrix.M23, 0,
+            matrix.M31, matrix.M32, matrix.M33, 0,
+            0, 0, 0, 1);
+    }
+    
+    public static implicit operator JMatrix(System.Numerics.Matrix4x4 matrix)
+    {
+        return new JMatrix(
+            matrix.M11, matrix.M12, matrix.M13,
+            matrix.M21, matrix.M22, matrix.M23,
+            matrix.M31, matrix.M32, matrix.M33);
+    }
+    
+    public static implicit operator System.Numerics.Quaternion(JMatrix matrix)
+    {
+        return System.Numerics.Quaternion.CreateFromRotationMatrix(matrix);
+    }
+    
+    public static implicit operator JMatrix(System.Numerics.Quaternion quaternion)
+    {
+        CreateFromQuaternion(new JQuaternion(quaternion), out var result);
+        return result;
+    }
+    
+    #endregion
 }
