@@ -91,7 +91,7 @@ public class CapsuleShape : Shape
 
     public override void CalculateBoundingBox(in JMatrix orientation, in JVector position, out JBBox box)
     {
-        JVector delta = halfLength * orientation.GetColumn(1);
+        JVector delta = halfLength * orientation.Y;
 
         box.Min.X = -radius - MathF.Abs(delta.X);
         box.Min.Y = -radius - MathF.Abs(delta.Y);

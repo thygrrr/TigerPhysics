@@ -23,6 +23,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using Jitter2.LinearMath;
 
 namespace Jitter2.Collision.Shapes;
@@ -142,7 +143,8 @@ public static class ShapeHelper
                 column0.X, column1.X, column2.X,
                 column0.Y, column1.Y, column2.Y,
                 column0.Z, column1.Z, column2.Z);
-
+            
+            
             float detA = A.Determinant();
 
             // now transform this canonical tetrahedron to the target tetrahedron

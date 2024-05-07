@@ -22,6 +22,7 @@
  */
 
 using System;
+using System.Numerics;
 using Jitter2.DataStructures;
 using Jitter2.Dynamics;
 using Jitter2.LinearMath;
@@ -205,7 +206,8 @@ public abstract class Shape : ISupportMap, IListIndex, IDynamicTreeProxy
     /// </summary>
     public virtual void CalculateBoundingBox(in JMatrix orientation, in JVector position, out JBBox box)
     {
-        JMatrix oriT = JMatrix.Transpose(orientation);
+        //Does NOT need to be transposed?!
+        JMatrix oriT = orientation; //JMatrix.Transpose(orientation);
 
         SupportMap(oriT.GetColumn(0), out JVector res);
         box.Max.X = JVector.Dot(oriT.GetColumn(0), res);

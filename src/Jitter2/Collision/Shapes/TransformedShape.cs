@@ -46,20 +46,20 @@ public class TransformedShape : Shape
     /// a linear map and a translation. 
     /// </summary>
     /// <param name="shape">The original shape which should be transformed.</param>
-    /// <param name="translation">Shape is translated by this vector.</param>
+    /// <param name="translate">Shape is translated by this vector.</param>
     /// <param name="transform">A linear map (may include sheer and scale) of the transformation.</param>
-    public TransformedShape(Shape shape, in JVector translation, in JMatrix transform)
+    public TransformedShape(Shape shape, in JVector translate, in JMatrix transform)
     {
         OriginalShape = shape;
-        this.translation = translation;
-        this.transformation = transform;
+        translation = translate;
+        transformation = transform;
 
         AnalyzeTransformation();
         UpdateShape();
     }
 
-    public TransformedShape(Shape shape, JVector translation) :
-        this(shape, translation, JMatrix.Identity)
+    public TransformedShape(Shape shape, JVector translate) :
+        this(shape, translate, JMatrix.Identity)
     {
         
     }
@@ -80,8 +80,7 @@ public class TransformedShape : Shape
     {
         if (MathHelper.IsRotationMatrix(transformation))
         {
-            type = MathHelper.UnsafeIsZero(transformation - JMatrix.Identity) ? 
-                TransformationType.Identity : TransformationType.Rotation;
+            type = MathHelper.UnsafeIsZero(transformation - JMatrix.Identity) ? TransformationType.Identity : TransformationType.Rotation;
         }
         else
         {
@@ -94,7 +93,7 @@ public class TransformedShape : Shape
         get => transformation;
         set
         {
-            this.transformation = value;
+            transformation = value;
             AnalyzeTransformation();
             UpdateShape();
         }

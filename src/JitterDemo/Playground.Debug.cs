@@ -44,6 +44,11 @@ public partial class Playground : RenderWindow
                 DebugRenderer.PushBox(DebugRenderer.Color.Green, Conversion.FromJitter(bb.Min),
                     Conversion.FromJitter(bb.Max));
             }
+            
+            foreach (var body in World.RigidBodies)
+            {
+                body.DebugDraw(DebugRenderer);
+            }
         }
 
         if (debugDrawIslands)

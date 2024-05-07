@@ -22,6 +22,8 @@
 
 using System;
 using System.Collections.Generic;
+using Jitter2;
+using Jitter2.LinearMath;
 using JitterDemo.Renderer.OpenGL;
 
 namespace JitterDemo.Renderer;
@@ -68,7 +70,7 @@ public class LineShader : BasicShader
         ";
 }
 
-public class DebugRenderer
+public class DebugRenderer : IDebugDrawer
 {
     public enum Color
     {
@@ -255,5 +257,22 @@ public class DebugRenderer
 
         Vao.VertexAttributes[0].Set(ab, 3, VertexAttributeType.Float, false, 3 * sof, 0 * sof); // position
         Vao.ElementArrayBuffer = eab;
+    }
+
+    public void DrawSegment(in JVector pA, in JVector pB)
+    {
+        PushLine(Color.Green, Conversion.FromJitter(pA), Conversion.FromJitter(pB));
+    }
+
+    public void DrawTriangle(in JVector pA, in JVector pB, in JVector pC)
+    {
+        PushLine(Color.Red, Conversion.FromJitter(pA), Conversion.FromJitter(pB));
+        PushLine(Color.Red, Conversion.FromJitter(pB), Conversion.FromJitter(pC));
+        PushLine(Color.Red, Conversion.FromJitter(pC), Conversion.FromJitter(pA));
+    }
+
+    public void DrawPoint(in JVector p)
+    {
+        PushPoint(Color.White, Conversion.FromJitter(p));
     }
 }

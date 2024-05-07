@@ -93,7 +93,7 @@ public struct JMatrix
         };
     }
 
-    public JVector GetColumn(int index)
+    public readonly JVector GetColumn(int index)
     {
         return index switch
         {
@@ -234,10 +234,16 @@ public struct JMatrix
 
     public static void Absolute(in JMatrix matrix, out JMatrix result)
     {
-        result = new JMatrix(
-            MathF.Abs(matrix.value.M11), MathF.Abs(matrix.value.M12), MathF.Abs(matrix.value.M13),
-            MathF.Abs(matrix.value.M21), MathF.Abs(matrix.value.M22), MathF.Abs(matrix.value.M23),
-            MathF.Abs(matrix.value.M31), MathF.Abs(matrix.value.M32), MathF.Abs(matrix.value.M33));
+        result = Matrix4x4.Identity;
+        result.M11 = MathF.Abs(matrix.value.M11);
+        result.M12 = MathF.Abs(matrix.value.M12);
+        result.M13 = MathF.Abs(matrix.value.M13);
+        result.M21 = MathF.Abs(matrix.value.M21);
+        result.M22 = MathF.Abs(matrix.value.M22);
+        result.M23 = MathF.Abs(matrix.value.M23);
+        result.M31 = MathF.Abs(matrix.value.M31);
+        result.M32 = MathF.Abs(matrix.value.M32);
+        result.M33 = MathF.Abs(matrix.value.M33);
     }
 
     public static void CreateFromQuaternion(in JQuaternion quaternion, out JMatrix result)
@@ -267,19 +273,6 @@ public struct JMatrix
     public static JMatrix operator *(in JMatrix matrix1, in JMatrix matrix2)
     {
         return Matrix4x4.Multiply(matrix1, matrix2);
-        /*
-        JMatrix result;
-        result.M11 = matrix1.M11 * matrix2.M11 + matrix1.M12 * matrix2.M21 + matrix1.M13 * matrix2.M31;
-        result.M12 = matrix1.M11 * matrix2.M12 + matrix1.M12 * matrix2.M22 + matrix1.M13 * matrix2.M32;
-        result.M13 = matrix1.M11 * matrix2.M13 + matrix1.M12 * matrix2.M23 + matrix1.M13 * matrix2.M33;
-        result.M21 = matrix1.M21 * matrix2.M11 + matrix1.M22 * matrix2.M21 + matrix1.M23 * matrix2.M31;
-        result.M22 = matrix1.M21 * matrix2.M12 + matrix1.M22 * matrix2.M22 + matrix1.M23 * matrix2.M32;
-        result.M23 = matrix1.M21 * matrix2.M13 + matrix1.M22 * matrix2.M23 + matrix1.M23 * matrix2.M33;
-        result.M31 = matrix1.M31 * matrix2.M11 + matrix1.M32 * matrix2.M21 + matrix1.M33 * matrix2.M31;
-        result.M32 = matrix1.M31 * matrix2.M12 + matrix1.M32 * matrix2.M22 + matrix1.M33 * matrix2.M32;
-        result.M33 = matrix1.M31 * matrix2.M13 + matrix1.M32 * matrix2.M23 + matrix1.M33 * matrix2.M33;
-        return result;
-        */
     }
 
     public float Trace()
@@ -319,10 +312,16 @@ public struct JMatrix
     
     public static implicit operator JMatrix(System.Numerics.Matrix4x4 matrix)
     {
-        return new JMatrix(
+        return new JMatrix
+        {
+            value = matrix,
+        };
+        /*
+        (
             matrix.M11, matrix.M12, matrix.M13,
             matrix.M21, matrix.M22, matrix.M23,
             matrix.M31, matrix.M32, matrix.M33); //TODO: Maybe just set value.
+            */
     }
     
     public static explicit operator System.Numerics.Quaternion(JMatrix matrix)

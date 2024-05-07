@@ -59,7 +59,7 @@ internal unsafe struct QMatrix
     public static JMatrix ProjectMultiplyLeftRight(in JQuaternion left, in JQuaternion right)
     {
         Unsafe.SkipInit(out JMatrix res);
-
+        
         res.M11 = -left.X * right.X + left.W * right.W + left.Z * right.Z + left.Y * right.Y;
         res.M12 = -left.X * right.Y + left.W * right.Z - left.Z * right.W - left.Y * right.X;
         res.M13 = -left.X * right.Z - left.W * right.Y - left.Z * right.X + left.Y * right.W;
@@ -70,7 +70,7 @@ internal unsafe struct QMatrix
         res.M32 = -left.Z * right.Y - left.Y * right.Z + left.X * right.W - left.W * right.X;
         res.M33 = -left.Z * right.Z + left.Y * right.Y + left.X * right.X + left.W * right.W;
 
-        return res;
+        return res; //TODO: Maybe needs transposition. ~~Tiger.
     }
 
     public JMatrix Projection()

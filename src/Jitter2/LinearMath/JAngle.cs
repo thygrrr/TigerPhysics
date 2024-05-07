@@ -40,7 +40,8 @@ public struct JAngle : IEquatable<JAngle>
 
     public readonly bool Equals(JAngle p)
     {
-        return p.Radiant == Radiant;
+        const float epsilon = 1e-16f;
+        return Math.Abs(p.Radiant - Radiant) < epsilon;
     }
 
     public readonly override int GetHashCode()
@@ -86,12 +87,12 @@ public struct JAngle : IEquatable<JAngle>
 
     public static bool operator ==(JAngle l, JAngle r)
     {
-        return (float)l == (float)r;
+        return l.Equals(r);
     }
 
     public static bool operator !=(JAngle l, JAngle r)
     {
-        return (float)l != (float)r;
+        return !l.Equals(r);
     }
 
     public static bool operator <(JAngle l, JAngle r)

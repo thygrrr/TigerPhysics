@@ -79,19 +79,6 @@ public static class MathHelper
         return MathF.Abs(matrix.Determinant() - 1.0f) < epsilon;
     }
 
-    public static void UnsafeDecomposeMatrix(in JMatrix matrix, out JMatrix orientation, out JVector scale)
-    {
-        orientation = matrix;
-
-        scale.X = orientation.X.Length();
-        scale.Y = orientation.Y.Length();
-        scale.Z = orientation.Z.Length();
-
-        orientation.X *= 1.0f / scale.X;
-        orientation.Y *= 1.0f / scale.Y;
-        orientation.Z *= 1.0f / scale.Z;
-    }
-
     public static bool IsZero(in JVector vector, float epsilon = 1e-6f)
     {
         return Vector3.Dot(vector, vector) < epsilon;

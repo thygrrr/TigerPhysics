@@ -63,13 +63,13 @@ public class EllipsoidShape : Shape
     }
 }
 
-public class DoubleSphereShape : Shape
+public class DoubleSphereShape : BoxShape
 {
-    public DoubleSphereShape()
+    public DoubleSphereShape() : base(1, 2, 3)
     {
         UpdateShape();
     }
-
+/*
     public override void SupportMap(in JVector direction, out JVector result)
     {
         JVector.Normalize(direction, out JVector ndir);
@@ -86,6 +86,7 @@ public class DoubleSphereShape : Shape
             result = sphere2 * 0.5f;
         }
     }
+  */  
 }
 
 public class Icosahedron : Shape
@@ -136,6 +137,7 @@ public class Demo14 : IDemo
 
     private EllipsoidShape ellipsoid = null!;
     private DoubleSphereShape doublesSphere = null!;
+    private DoubleSphereShape doublesSphere2 = null!;
     private Icosahedron icosahedron = null!;
 
     public void Build()
@@ -149,6 +151,8 @@ public class Demo14 : IDemo
         doublesSphere = new DoubleSphereShape();
         icosahedron = new Icosahedron();
 
+        doublesSphere2 = new DoubleSphereShape();
+
         var body1 = world.CreateRigidBody();
         body1.AddShape(ellipsoid);
         body1.Position = new JVector(-3, 3, 0);
@@ -156,6 +160,10 @@ public class Demo14 : IDemo
         var body2 = world.CreateRigidBody();
         body2.AddShape(doublesSphere);
         body2.Position = new JVector(0, 3, 0);
+
+        var body4 = world.CreateRigidBody();
+        body4.AddShape(doublesSphere2);
+        body4.Position = new JVector(0, 3, 4);
 
         var body3 = world.CreateRigidBody();
         body3.AddShape(icosahedron);
@@ -169,6 +177,9 @@ public class Demo14 : IDemo
 
         var rbsd = pg.CSMRenderer.GetInstance<CustomSupportMapInstance<DoubleSphereShape>>();
         rbsd.PushMatrix(Conversion.FromJitter(doublesSphere.RigidBody!), Vector3.UnitY);
+
+        var rbsd2 = pg.CSMRenderer.GetInstance<CustomSupportMapInstance<DoubleSphereShape>>();
+        rbsd2.PushMatrix(Conversion.FromJitter(doublesSphere2.RigidBody!), Vector3.UnitY);
 
         var icsd = pg.CSMRenderer.GetInstance<CustomSupportMapInstance<Icosahedron>>();
         icsd.PushMatrix(Conversion.FromJitter(icosahedron.RigidBody!), Vector3.UnitZ);

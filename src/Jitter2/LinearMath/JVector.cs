@@ -210,7 +210,7 @@ public struct JVector : IEquatable<JVector>, IEquatable<Vector3>
             M32 = u.Z * v.Y,
             M33 = u.Z * v.Z,
         };
-        return result; //TODO: Maybe needs transposing?
+        return (result); //TODO: Maybe needs transposing?
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
